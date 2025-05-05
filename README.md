@@ -1,16 +1,22 @@
-# Frontend
+# FinanceTool
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.2.9.
+¡Tu app amiga para llevar registro de tus finanzas!
 
-## Development server
+## Cómo instalar el repositorio
 
-To start a local development server, run:
+Al momento de clonar el repositorio en tu PC local, debes abrir la consola de Visual Studio Code o tu IDE favorito (En VSCode es con *Ctrl + ñ*), navegar adentro de la carpeta recién creada de *FinanceTool* y correr el comando:
 
-```bash
-ng serve
+```npm init
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+Esto instalará todas las dependencias necesarias de Angular, Tailwind, y Node en general.
+
+Una vez esté instalado, ve dentro de la carpeta *frontend* y en la consola escribe 
+
+```ng serve
+```
+
+Navega a la URL indicada en tu navegador y comprueba la app funcione. 
 
 ## Code scaffolding
 
