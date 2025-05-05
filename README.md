@@ -6,14 +6,16 @@
 
 Al momento de clonar el repositorio en tu PC local, debes abrir la consola de Visual Studio Code o tu IDE favorito (En VSCode es con *Ctrl + ñ*), navegar adentro de la carpeta recién creada de *FinanceTool* y correr el comando:
 
-```npm init
+```bash
+npm init
 ```
 
 Esto instalará todas las dependencias necesarias de Angular, Tailwind, y Node en general.
 
 Una vez esté instalado, ve dentro de la carpeta *frontend* y en la consola escribe 
 
-```ng serve
+```bash
+ng serve
 ```
 
 Navega a la URL indicada en tu navegador y comprueba la app funcione. 
