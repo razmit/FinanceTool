@@ -12,7 +12,7 @@ npm init
 
 Esto instalará todas las dependencias necesarias de Angular, Tailwind, y Node en general.
 
-Una vez esté instalado, ve dentro de la carpeta *frontend* y en la consola escribe 
+Una vez esté instalado, ve dentro de la carpeta **frontend** y en la consola escribe 
 
 ```bash
 ng serve
