@@ -1,0 +1,43 @@
+<nav class="bg-white shadow-md px-6 py-4 flex justify-between items-center">
+  <a routerLink="/" class="text-2xl font-semibold text-indigo-600">Finance-Man</a>
+  <div *ngIf="auth.isLoggedIn(); else anon" class="flex items-center space-x-6">
+    <a
+      routerLink="/dashboard"
+      class="text-gray-700 hover:text-indigo-600"
+    >
+      Dashboard
+    </a>
+    <a
+      routerLink="/entradas/registrar"
+      class="text-gray-700 hover:text-indigo-600"
+    >
+      Entradas
+    </a>
+    <a
+      routerLink="/salidas/registrar"
+      class="text-gray-700 hover:text-indigo-600 "
+    >
+      Salidas
+    </a>
+  </div>
+
+  <div *ngIf="auth.isLoggedIn(); else anon" class="flex items-center space-x-4">
+    <span class="text-gray-600">Hola, <strong>{{ auth.getUsername() }}</strong></span>
+    <button
+      (click)="logout()"
+      class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded"
+    >
+      Cerrar sesión
+    </button>
+  </div>
+
+  <!-- Por si algún motivo no está logueado -->
+  <ng-template #anon>
+    <a
+      routerLink="/login"
+      class="bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-2 rounded"
+    >
+      Iniciar sesión
+    </a>
+  </ng-template>
+</nav>

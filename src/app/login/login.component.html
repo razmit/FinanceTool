@@ -1,0 +1,37 @@
+<div class="max-w-sm mx-auto bg-white shadow-lg rounded-lg overflow-hidden">
+  <div class="px-6 py-4">
+    <h2 class="text-2xl font-bold text-center mb-4">Iniciar sesión</h2>
+    <form (ngSubmit)="onSubmit()" class="space-y-4">
+      <div>
+        <label class="block text-gray-700">Usuario</label>
+        <input
+          label="user"
+          placeholder="Ingrese su usuario"
+          [(ngModel)]="username"
+          name="username"
+          required
+          class="w-full mt-1 px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-indigo-400"
+        />
+      </div>
+      <div>
+        <label class="block text-gray-700">Contraseña</label>
+        <input
+          label="password"
+          placeholder="Ingrese su contraseña"
+          [(ngModel)]="password"
+          name="password"
+          type="password"
+          required
+          class="w-full mt-1 px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-indigo-400"
+        />
+      </div>
+      <div *ngIf="error" class="text-red-600 text-sm">{{ error }}</div>
+      <button
+        type="submit"
+        class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded"
+      >
+        Entrar
+      </button>
+    </form>
+  </div>
+</div>

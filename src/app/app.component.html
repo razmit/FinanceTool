@@ -1,3 +1,9 @@
-<h1 class="text-3xl bg-amber-500 font-bold underline">
-  Hello world! Fak me
-</h1>
+<div class="min-h-screen flex flex-col">
+  <app-navbar *ngIf="showLayout"></app-navbar>
+
+  <main class="flex-grow container mx-auto px-6 py-8">
+    <router-outlet></router-outlet>
+  </main>
+
+  <app-footer *ngIf="showLayout"></app-footer>
+</div>
