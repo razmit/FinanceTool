@@ -10,7 +10,7 @@ const cors = require("cors");
 const multer = require("multer");
 
 
-// Configura dónde se guardan las facturas
+// Configura dónde se guardan las facturas de entradas
 const storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, 'uploads/'),
   filename:    (req, file, cb) => {
@@ -46,6 +46,7 @@ const pool = mysql.createPool({
   user: process.env.DB_USER,
   password: process.env.DB_PASS,
   database: process.env.DB_NAME,
+  decimalNumbers: true
 });
 
 app.use(
@@ -150,6 +151,24 @@ function isAuthenticated(req, res, next) {
 
 // **--**--** ENTRADAS **--**--** //
 
+// GET /api/entradas — devuelve todas las entradas del usuario
+app.get('/api/entradas', isAuthenticated, async (req, res) => {
+  try {
+    const userId = req.session.userId;
+    const [rows] = await pool.query(
+      `SELECT id, tipo, monto, fecha, factura_path 
+         FROM entries 
+        WHERE user_id = ? 
+     ORDER BY fecha DESC`,
+      [userId]
+    );
+    res.json(rows);
+  } catch (err) {
+    console.error('Error listando entradas:', err);
+    res.status(500).json({ message: 'No se pudo obtener las entradas.' });
+  }
+});
+
 // POST /api/entradas
 app.post(
   '/api/entradas',
@@ -177,53 +196,74 @@ app.post(
 
 // **--**--** RETIROS **--**--** //
 
-// GET /api/salidas
-app.get(
-  '/api/salidas',
-  isAuthenticated,
-  async (req, res) => {
-    try {
-      const userId = req.session.userId;
-      const [rows] = await pool.query(
-        `SELECT id, tipo, monto, fecha, factura_path
-         FROM salidas
-         WHERE user_id = ?`,
-        [userId]
-      );
-      res.json(rows);
-    } catch (err) {
-      console.error('Error al listar salidas:', err);
-      res.status(500).json({ message: 'Error obteniendo las salidas.' });
-    }
+// GET /api/salidas — devuelve todas las salidas del usuario
+app.get('/api/salidas', isAuthenticated, async (req, res) => {
+  try {
+    const userId = req.session.userId;
+    const [rows] = await pool.query(
+      `SELECT id, tipo, monto, fecha, factura_path 
+         FROM withdrawal 
+        WHERE user_id = ? 
+     ORDER BY fecha DESC`,
+      [userId]
+    );
+    res.json(rows);
+  } catch (err) {
+    console.error('Error listando salidas:', err);
+    res.status(500).json({ message: 'No se pudo obtener las salidas.' });
   }
-);
+});
 
 // POST /api/salidas
 app.post(
-  '/api/salidas',
-  isAuthenticated,          
-  uploadSalida.single('factura'),
+  "/api/salidas",
+  isAuthenticated,
+  uploadSalida.single("factura"),
   async (req, res) => {
     try {
       const { tipo, monto, fecha } = req.body;
-      const facturaPath = req.file?.path || null;
-      const userId      = req.session.userId;
+      const userId = req.session.userId;
 
-      const [result] = await pool.query(
-        `INSERT INTO withdrawal 
-         (user_id, tipo, monto, fecha, factura_path)
-         VALUES (?, ?, ?, ?, ?)`,
-        [userId, tipo, monto, fecha, facturaPath]
+      // Obtener totales actuales para sacar el balance disponible
+      const [[{ totalEntradas }]] = await pool.query(
+        "SELECT COALESCE(SUM(monto),0) AS totalEntradas FROM entries WHERE user_id = ?",
+        [userId]
+      );
+      const [[{ totalSalidas }]] = await pool.query(
+        "SELECT COALESCE(SUM(monto),0) AS totalSalidas FROM withdrawal WHERE user_id = ?",
+        [userId]
       );
 
-      res.json({ id: result.insertId });
+      const montoReq = Number(monto);
+
+      console.log("Total entradas: "+totalEntradas+". Total salidas: "+totalSalidas+". Monto Req: "+montoReq+". Monto total de salidas a comparar: "+(totalSalidas+montoReq));
+      
+      // Validar contra balance (salidas pasadas + la nueva)
+      if (totalEntradas < totalSalidas + montoReq) {
+        const balanceActual = totalEntradas - totalSalidas;
+        return res.status(400).json({
+          message: `Saldo insuficiente. Tu balance actual es ${balanceActual.toFixed(
+            2
+          )}`,
+        });
+      }
+
+      // Si pasa validación, grabar la withdrawal
+      const facturaPath = req.file?.path || null;
+      const [result] = await pool.query(
+        `INSERT INTO withdrawal
+         (user_id, tipo, monto, fecha, factura_path)
+         VALUES (?, ?, ?, ?, ?)`,
+        [userId, tipo, montoReq, fecha, facturaPath]
+      );
+
+      return res.json({ id: result.insertId });
     } catch (err) {
-      console.error('Error al guardar retiro:', err);
-      res.status(500).json({ message: 'Error guardando el retiro.' });
+      console.error("Error al guardar salida:", err);
+      return res.status(500).json({ message: "Error guardando la salida." });
     }
   }
 );
-
 
 // Test
 app.listen(port, () => {
