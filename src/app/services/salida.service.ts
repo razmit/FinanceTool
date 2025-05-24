@@ -13,4 +13,9 @@ export class SalidaService {
       withCredentials: true,
     });
   }
+
+  // Obtener todas las salidas
+  getAll(): Observable<any[]> {
+    return this.http.get<any[]>(this.apiUrl, { withCredentials: true });
+  }
 }

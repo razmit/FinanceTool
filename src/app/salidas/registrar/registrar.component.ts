@@ -56,7 +56,12 @@ export class RegistrarSalidaComponent {
       },
       error: (err) => {
         this.loading = false;
-        this.error = err.error?.message || 'Error al registrar el retiro.';
+        const msg = err.error?.message || 'Error al registrar la salida.';
+        Swal.fire({
+          icon: 'error',
+          title: 'Saldo insuficiente',
+          text: msg,
+        });
       },
     });
   }

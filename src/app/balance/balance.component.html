@@ -1,0 +1,84 @@
+<div class="space-y-8">
+  <!-- Botón de Exportar PDF -->
+  <div class="text-right">
+    <button
+      (click)="exportPDF()"
+      class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded"
+    >
+      Exportar PDF
+    </button>
+  </div>
+
+  <div #pdfContent>
+    <!-- Balance -->
+    <div class="bg-white shadow-lg rounded-lg p-8 text-center mb-8">
+      <h1 class="text-4xl font-bold mb-2">Balance Actual</h1>
+      <p class="text-5xl text-indigo-600">{{ balance.toFixed(2) }} €</p>
+    </div>
+
+    <!-- Gráficas lado a lado -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+      <!-- Line Chart -->
+      <div class="bg-white p-6 rounded-lg shadow-lg w-full h-[700px]">
+        <h2 class="text-xl font-semibold mb-4 text-center">
+          Entradas vs Salidas (Línea)
+        </h2>
+        <canvas #lineChartCanvas class="w-full h-full"></canvas>
+      </div>
+
+      <!-- Pie Chart -->
+      <div class="bg-white p-6 rounded-lg shadow-lg w-full h-[700px]">
+        <h2 class="text-xl font-semibold mb-4 text-center">
+          Proporción Entradas/Salidas
+        </h2>
+        <canvas #pieChartCanvas class="w-full h-full"></canvas>
+      </div>
+    </div>
+
+    <!-- Historial completo -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div class="bg-white shadow-lg rounded-lg p-6">
+        <h2 class="text-2xl font-semibold mb-4">Todas las Entradas</h2>
+        <table class="min-w-full table-auto">
+          <thead class="bg-green-100">
+            <tr>
+              <th class="px-4 py-2 text-left">Fecha</th>
+              <th class="px-4 py-2 text-left">Tipo</th>
+              <th class="px-4 py-2 text-right">Monto ($)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              *ngFor="let e of allEntradas"
+              class="border-b hover:bg-green-50"
+            >
+              <td class="px-4 py-2">{{ e.fecha }}</td>
+              <td class="px-4 py-2">{{ e.tipo }}</td>
+              <td class="px-4 py-2 text-right">{{ e.monto }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="bg-white shadow-lg rounded-lg p-6">
+        <h2 class="text-2xl font-semibold mb-4">Todas las Salidas</h2>
+        <table class="min-w-full table-auto">
+          <thead class="bg-red-100">
+            <tr>
+              <th class="px-4 py-2 text-left">Fecha</th>
+              <th class="px-4 py-2 text-left">Tipo</th>
+              <th class="px-4 py-2 text-right">Monto ($)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let s of allSalidas" class="border-b hover:bg-red-50">
+              <td class="px-4 py-2">{{ s.fecha }}</td>
+              <td class="px-4 py-2">{{ s.tipo }}</td>
+              <td class="px-4 py-2 text-right">{{ s.monto }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

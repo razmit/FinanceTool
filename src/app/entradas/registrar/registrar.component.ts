@@ -35,7 +35,7 @@ export class RegistrarEntradaComponent {
 
   onSubmit() {
     if (!this.tipo || !this.monto || !this.fecha) {
-      this.error = 'Todos los campos salvo factura son obligatorios.';
+      this.error = 'Todos los campos son obligatorios.';
       return;
     }
     const data = new FormData();
