@@ -44,16 +44,16 @@ export class BalanceComponent implements OnInit {
       e: this.entradas.getAll(),
       s: this.salidas.getAll(),
     }).subscribe(({ e, s }) => {
-      // 1) Datos completos para tablas
+      //Datos completos para tablas
       this.allEntradas = e;
       this.allSalidas = s;
 
-      // 2) Balance
+      // Balance
       const totalE = e.reduce((sum, x) => sum + parseFloat(x.monto), 0);
       const totalS = s.reduce((sum, x) => sum + parseFloat(x.monto), 0);
       this.balance = totalE - totalS;
 
-      // 3) Preparar series by date (mismos labels)
+      // Preparar series by date (mismos labels)
       const dates = Array.from(
         new Set([...e.map((x) => x.fecha), ...s.map((x) => x.fecha)])
       ).sort((a, b) => new Date(a).getTime() - new Date(b).getTime());
@@ -69,7 +69,7 @@ export class BalanceComponent implements OnInit {
           .reduce((sum, x) => sum + parseFloat(x.monto), 0)
       );
 
-      // 4) Delay para garantizar que los <canvas> estén en el DOM
+      // Delay para garantizar que los <canvas> estén en el DOM
       setTimeout(() => {
         this.renderLineChart(dates, dataE, dataS);
         this.renderPieChart(totalE, totalS);
@@ -134,27 +134,27 @@ export class BalanceComponent implements OnInit {
   }
 
   async exportPDF() {
-    // 1) Capture the charts as images
+    // Captura las gráficas como imágenes
     const lineImg = this.lineChart.toBase64Image();
     const pieImg = this.pieChart.toBase64Image();
 
-    // 2) Create the PDF
+    // Crea el PDF
     const doc = new jsPDF('p', 'pt', 'a4');
     const pageWidth = doc.internal.pageSize.getWidth();
 
-    // 3) Title and balance
+    // Título y Balance de cuenta
     doc.setFontSize(18);
-    doc.text(`Balance Actual: €${this.balance.toFixed(2)}`, pageWidth / 2, 40, {
+    doc.text(`Balance Actual: $${this.balance.toFixed(2)}`, pageWidth / 2, 40, {
       align: 'center',
     });
 
-    // 4) Embed Line Chart
+    //Inserta gráfica de líneas
     doc.addImage(lineImg, 'PNG', 40, 60, pageWidth - 80, 200);
 
-    // 5) Embed Pie Chart
+    // Inserta Pie Chart
     doc.addImage(pieImg, 'PNG', 40, 280, pageWidth / 2 - 60, 200);
 
-    // 6) Entradas table
+    // Tabla de Entradas
     autoTable(doc, {
       head: [['Fecha', 'Tipo', 'Monto']],
       body: this.allEntradas.map((e) => [e.fecha, e.tipo, e.monto]),
@@ -163,7 +163,7 @@ export class BalanceComponent implements OnInit {
       headStyles: { fillColor: [16, 185, 129] },
     });
 
-    // 7) Salidas table (directly after the first table)
+    // Tabla de Salidas
     const finalY = (doc as any).lastAutoTable.finalY + 20;
     autoTable(doc, {
       head: [['Fecha', 'Tipo', 'Monto']],
@@ -173,7 +173,6 @@ export class BalanceComponent implements OnInit {
       headStyles: { fillColor: [239, 68, 68] },
     });
 
-    // 8) Save
     doc.save('reporte-financiero.pdf');
   }
 }
